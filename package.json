@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/hr-rfe5-ignis/SDC/issues"
   },
-  "homepage": "https://github.com/hr-rfe5-ignis/SDC#readme"
+  "homepage": "https://github.com/hr-rfe5-ignis/SDC#readme",
+  "dependencies": {
+    "mysql": "^2.18.1"
+  }
 }
