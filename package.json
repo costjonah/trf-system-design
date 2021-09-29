@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,5 +17,10 @@
   "bugs": {
     "url": "https://github.com/hr-rfe5-ignis/SDC/issues"
   },
-  "homepage": "https://github.com/hr-rfe5-ignis/SDC#readme"
+  "homepage": "https://github.com/hr-rfe5-ignis/SDC#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.13",
+    "pg": "^8.7.1"
+  }
 }
