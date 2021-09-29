@@ -1,21 +1,20 @@
 const pg = require("pg");
-const config = require('../config.js');
-connectStr = `postgres://JonahC:${config.dbPassword}@localhost:5432/products`;
-
+const config = require("../config.js");
+// connectStr = `postgres://JonahC:${config.dbPassword}@localhost:5432/products`;
 
 const pool = new pg.Pool({
-  connectStr,
+  user: "JonahC",
+  host: "localhost",
+  database: "products",
+  password: config.dbPassword,
+  port: 5432,
 });
 
-const client = new pg.Client({
-  connectStr,
-});
+// const client = new pg.Client({
+//   connectStr,
+// });
 
-client.connect();
+// client.connect();
+pool.connect();
 
-client.query("SELECT NOW()", (err, res) => {
-  console.log(err, res);
-  client.end();
-});
-
-module.exports = { client, pool };
+module.exports = pool;
