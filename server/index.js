@@ -1,5 +1,6 @@
 const express = require("express");
 let app = express();
+const controllers = require("./controllers.js");
 const db = require("../db/index.js");
 
 app.use(express.json());
@@ -10,6 +11,6 @@ app.listen(port, () => {
   console.log(`listening on port ${port}`);
 });
 
-app.get("/", (req, res) => {
-  res.send();
-});
+app.get("/products", controllers.productsList.getAll);
+
+module.exports = app;

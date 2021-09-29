@@ -1,5 +1,3 @@
-CREATE SCHEMA productSchema;
-
 CREATE TABLE list_products (
   id serial PRIMARY KEY,
   name varchar(250),
