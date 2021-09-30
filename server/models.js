@@ -101,6 +101,76 @@ const models = {
       }
     });
   },
+  getCartInfo: (param, callback) => {
+    const userId = Number(param);
+    const cartMeta = [];
+    const cartItems = [];
+    const queryStr = `SELECT * FROM cart WHERE user_session=${userId}`;
+    db.query(queryStr, (err, res) => {
+      if (err) {
+        console.log("Failed to GET from cart", err);
+        callback(err);
+      } else {
+        cartMeta.push(res.rows);
+        const querySubStr = `SELECT sku_id, count FROM current_items WHERE user_session=${userId}`;
+        db.query(querySubStr, (err, res) => {
+          if (err) {
+            console.log("Failed to GET from cart current items", err);
+            callback(err);
+          } else {
+            cartItems.push(res.rows);
+            console.log("Successful GET from cart");
+            callback(null, {
+              cartMeta: cartMeta,
+              cartItems: cartItems,
+            });
+          }
+        });
+      }
+    });
+  },
+  postToCart: (cartData, callback) => {
+    const idQueryStr = "SELECT MAX(id) FROM cart";
+    db.query(idQueryStr, (err, res) => {
+      if (err) {
+        console.log("Failed to POST to cart", err);
+        callback(err);
+      } else {
+        const currentId = res.rows[0].max;
+        const queryStr =
+          "INSERT INTO cart (id, user_session, product_id, active) VALUES ($1, $2, $3, $4)";
+        const queryArr = [
+          currentId + 1,
+          Number(cartData.user),
+          Number(cartData.body.product_id),
+          1,
+        ];
+        db.query(queryStr, queryArr, (err, res) => {
+          if (err) {
+            console.log("Failed to POST to cart", err);
+            callback(err);
+          } else {
+            const querySubStr =
+              "INSERT INTO current_items (sku_id, count, user_session) VALUES ($1, $2, $3)";
+            const querySubArr = [
+              Number(cartData.body.sku_id),
+              Number(cartData.body.count),
+              Number(cartData.user),
+            ];
+            db.query(querySubStr, querySubArr, (err, res) => {
+              if (err) {
+                console.log("Failed to POST to current items", err);
+                callback(err);
+              } else {
+                console.log("Successful POST", res);
+                callback(null, res);
+              }
+            });
+          }
+        });
+      }
+    });
+  },
 };
 
 module.exports = models;

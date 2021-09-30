@@ -71,7 +71,7 @@ CREATE TABLE cart (
 DROP TABLE IF EXISTS current_items;
 
 CREATE TABLE current_items (
-  id int PRIMARY KEY,
+  id serial PRIMARY KEY,
   sku_id int,
   count int,
   user_session int NOT NULL

@@ -3,8 +3,8 @@ const models = require("./models.js");
 const controllers = {
   productsList: {
     getProducts: (req, res) => {
-      const params = req.params;
-      models.getProducts(params, (err, data) => {
+      const param = req.params;
+      models.getProducts(param, (err, data) => {
         if (err) {
           throw err;
         }
@@ -47,12 +47,25 @@ const controllers = {
   },
   shoppingCart: {
     getCart: (req, res) => {
-      console.log("GETCART: ", req.params);
-      res.send(req.params);
+      const param = req.headers.user_session;
+      models.getCartInfo(param, (err, data) => {
+        if (err) {
+          throw err;
+        }
+        res.send(data);
+      });
     },
-    postToCart: (req, res) => {
-      console.log("POSTCART: ", req.body);
-      res.status(201).send(req.body);
+    postCart: (req, res) => {
+      const cartData = {
+        user: req.headers.user_session,
+        body: req.body,
+      };
+      models.postToCart(cartData, (err, data) => {
+        if (err) {
+          throw err;
+        }
+        res.status(201).send(data);
+      });
     },
   },
 };
