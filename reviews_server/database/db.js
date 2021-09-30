@@ -19,9 +19,10 @@ module.exports = db
 
 
 //VERY USEFULL
-// LOAD DATA LOCAL INFILE '/Users/shavkatshavkiev/Downloads/reviews.csv'
-// INTO TABLE reviews
+// LOAD DATA LOCAL INFILE '/Users/shavkatshavkiev/Downloads/characteristic_reviews.csv'
+// INTO TABLE characteristics_review
 // FIELDS TERMINATED BY ','
+// ENCLOSED BY '"'
 // LINES TERMINATED BY '\n'
 // IGNORE 1 LINES
-// (id,product_id,rating,date,summary,body,recommend,reported,reviewer_name,reviewer_email,response,helpfulness);
+// (id,characteristics_id,review_id,value);

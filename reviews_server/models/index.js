@@ -10,29 +10,26 @@ module.exports = {
       } else {
         Promise.all(
           data.map(review => {
-            console.log(1)
             let newDate = new Date(review.date)
             newDate.toISOString()
             review.date = newDate
-            review.photos = []
 
-            let queryString = `SELECT id,url FROM review_photos WHERE review_id = ${review.review_id}`
             return new Promise((resolve, reject) => {
+              let queryString = `SELECT id, url FROM review_photos WHERE id = ${review.review_id}`
               db.query(queryString, (err, photos) => {
                 if(err){
                   reject(err)
                 } else {
-                  console.log(2)
-                  review.photos.push(photos)
-                  resolve()
+                  review.photos = photos
+                  resolve(review)
                 }
               })
             })
           })
         )
-        .then(
-          console.log(3)
-        )
+        .then(updatedData => {
+          callBack(null, data)
+        })
       }
     })
   }

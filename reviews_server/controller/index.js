@@ -2,7 +2,6 @@ const models = require('../models/index.js')
 
 module.exports = {
   getReviews: function(req, res){
-    console.log(req.query)
     let page = req.query.page || 1
     let count = req.query.count || 5
     let sort = !req.query.sort ? 'rating' : req.query.sort
@@ -13,7 +12,7 @@ module.exports = {
           res.status(500)
           res.end('Something went wrong')
         }
-        res.send(JSON.stringify(data))
+        res.json(data)
       })
     } else {
       res.status(422)
