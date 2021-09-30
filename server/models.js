@@ -40,14 +40,46 @@ const models = {
   },
   getProductStyles: (param, callback) => {
     const productId = Number(param);
+    const resultObj = {
+      product_id: param,
+      results: [],
+      photos: [],
+      skus: {},
+    };
     const queryStr = `SELECT * FROM product_styles WHERE productId=${productId}`;
     db.query(queryStr, (err, res) => {
       if (err) {
         console.log("Failed to GET product styles: ", err);
         callback(err);
       } else {
-        console.log("Successful product styles GET", res.rows);
-        callback(null, res.rows);
+        resultObj.results = res.rows;
+        res.rows.forEach((x) => {
+          const photosQuery = `SELECT thumbnail_url, url FROM photos WHERE styleId=${x.id}`;
+          db.query(photosQuery, (err, res) => {
+            resultObj.photos = res.rows;
+            if (err) {
+              console.log("Failed to GET photos: ", err);
+              callback(err);
+            } else {
+              const skusQuery = `SELECT * FROM skus WHERE styleId=${x.id}`;
+              db.query(skusQuery, (err, res) => {
+                if (err) {
+                  console.log("Failed to GET skus: ", err);
+                  callback(err);
+                } else {
+                  res.rows.forEach((y) => {
+                    resultObj.skus[y.id] = {
+                      quantity: y.quantity,
+                      size: y.size,
+                    };
+                  });
+                  console.log("Successful product styles GET", resultObj);
+                  callback(null, resultObj);
+                }
+              });
+            }
+          });
+        });
       }
     });
   },
