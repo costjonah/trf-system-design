@@ -68,6 +68,15 @@ CREATE TABLE cart (
       REFERENCES list_products(id)
 );
 
+DROP TABLE IF EXISTS current_items;
+
+CREATE TABLE current_items (
+  id int PRIMARY KEY,
+  sku_id int,
+  count int,
+  user_session int NOT NULL
+);
+
 COPY list_products(id, name, slogan, description, category, default_price)
 FROM '/Users/JonahC/Downloads/product.csv'
 DELIMITER ','

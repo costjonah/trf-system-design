@@ -16,4 +16,7 @@ router.get(
   controllers.relatedProducts.getRelatedProducts
 );
 
+router.get("/cart", controllers.shoppingCart.getCart);
+router.post("/cart", controllers.shoppingCart.postToCart);
+
 module.exports = router;

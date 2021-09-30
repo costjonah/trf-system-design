@@ -45,6 +45,16 @@ const controllers = {
       });
     },
   },
+  shoppingCart: {
+    getCart: (req, res) => {
+      console.log("GETCART: ", req.params);
+      res.send(req.params);
+    },
+    postToCart: (req, res) => {
+      console.log("POSTCART: ", req.body);
+      res.status(201).send(req.body);
+    },
+  },
 };
 
 module.exports = controllers;

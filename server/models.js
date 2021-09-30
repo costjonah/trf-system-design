@@ -43,38 +43,43 @@ const models = {
     const resultObj = {
       product_id: param,
       results: [],
-      photos: [],
-      skus: {},
     };
+    let processed = 0;
     const queryStr = `SELECT * FROM product_styles WHERE productId=${productId}`;
     db.query(queryStr, (err, res) => {
       if (err) {
         console.log("Failed to GET product styles: ", err);
         callback(err);
       } else {
-        resultObj.results = res.rows;
-        res.rows.forEach((x) => {
-          const photosQuery = `SELECT thumbnail_url, url FROM photos WHERE styleId=${x.id}`;
+        res.rows.forEach((x, indexX) => {
+          resultObj.results.push(x);
+        });
+        res.rows.forEach((y, indexY) => {
+          const photosQuery = `SELECT thumbnail_url, url FROM photos WHERE styleId=${y.id}`;
           db.query(photosQuery, (err, res) => {
-            resultObj.photos = res.rows;
+            resultObj.results[indexY].photos = res.rows[indexY];
             if (err) {
               console.log("Failed to GET photos: ", err);
               callback(err);
             } else {
-              const skusQuery = `SELECT * FROM skus WHERE styleId=${x.id}`;
+              const skusQuery = `SELECT * FROM skus WHERE styleId=${y.id}`;
               db.query(skusQuery, (err, res) => {
                 if (err) {
                   console.log("Failed to GET skus: ", err);
                   callback(err);
                 } else {
-                  res.rows.forEach((y) => {
-                    resultObj.skus[y.id] = {
-                      quantity: y.quantity,
-                      size: y.size,
+                  resultObj.results[indexY].skus = {};
+                  res.rows.forEach((z, indexZ) => {
+                    resultObj.results[indexY].skus[z.id] = {
+                      quantity: z.quantity,
+                      size: z.size,
                     };
                   });
-                  console.log("Successful product styles GET", resultObj);
-                  callback(null, resultObj);
+                  processed++;
+                  if (processed === resultObj.results.length) {
+                    console.log("Successful product styles GET", resultObj);
+                    callback(null, resultObj);
+                  }
                 }
               });
             }
