@@ -6,7 +6,7 @@ const controllers = {
       const param = req.params;
       models.getProducts(param, (err, data) => {
         if (err) {
-          throw err;
+          res.status(500).next(err);
         }
         res.send(data);
       });
@@ -17,7 +17,7 @@ const controllers = {
       const paramId = req.params.product_id;
       models.getProductInfo(paramId, (err, data) => {
         if (err) {
-          throw err;
+          res.status(500).next(err);
         }
         res.send(data);
       });
@@ -28,7 +28,7 @@ const controllers = {
       const paramId = req.params.product_id;
       models.getProductStyles(paramId, (err, data) => {
         if (err) {
-          throw err;
+          res.status(500).next(err);
         }
         res.send(data);
       });
@@ -39,7 +39,7 @@ const controllers = {
       const paramId = req.params.product_id;
       models.getRelatedProducts(paramId, (err, data) => {
         if (err) {
-          throw err;
+          res.status(500).next(err);
         }
         res.send(data);
       });
@@ -50,7 +50,7 @@ const controllers = {
       const param = req.headers.user_session;
       models.getCartInfo(param, (err, data) => {
         if (err) {
-          throw err;
+          res.status(500).next(err);
         }
         res.send(data);
       });
@@ -62,7 +62,7 @@ const controllers = {
       };
       models.postToCart(cartData, (err, data) => {
         if (err) {
-          throw err;
+          res.status(500).next(err);
         }
         res.status(201).send(data);
       });

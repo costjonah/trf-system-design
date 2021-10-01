@@ -77,7 +77,6 @@ const models = {
                   });
                   processed++;
                   if (processed === resultObj.results.length) {
-                    console.log("Successful product styles GET", resultObj);
                     callback(null, resultObj);
                   }
                 }

@@ -9,6 +9,15 @@ const pool = new pg.Pool({
   port: 5432,
 });
 
-pool.connect();
+pool.connect((err, client, done) => {
+  if (err) {
+    throw err;
+  }
+  done();
+});
 
-module.exports = pool;
+var endConnect = () => {
+  return pool.end();
+};
+
+module.exports = { pool, endConnect };
