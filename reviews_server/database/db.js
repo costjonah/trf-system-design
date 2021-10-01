@@ -18,11 +18,11 @@ db.connect( (err) => {
 module.exports = db
 
 
-//VERY USEFULL
-// LOAD DATA LOCAL INFILE '/Users/shavkatshavkiev/Downloads/characteristic_reviews.csv'
-// INTO TABLE characteristics_review
+// //VERY USEFULL
+// LOAD DATA LOCAL INFILE '/Users/shavkatshavkiev/Downloads/reviews.csv'
+// INTO TABLE reviews
 // FIELDS TERMINATED BY ','
 // ENCLOSED BY '"'
 // LINES TERMINATED BY '\n'
 // IGNORE 1 LINES
-// (id,characteristics_id,review_id,value);
+// (id,product_id,rating,date,summary,body,recommend,reported,reviewer_name,reviewer_email,response,helpfulness);
