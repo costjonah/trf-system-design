@@ -60,7 +60,6 @@ module.exports = {
         callBack(err)
       }
       db.query('SELECT LAST_INSERT_ID()', (err, id) => {
-        console.log(id[0]['LAST_INSERT_ID()'])
         if(err){
           callBack(err)
         }
@@ -68,7 +67,6 @@ module.exports = {
           body.photos.map(photo => {
             return new Promise((resolve, reject) => {
               let queryStringPhotos = `INSERT INTO review_photos (review_id, url) VALUES (${id[0]['LAST_INSERT_ID()']}, '${photo}')`
-              console.log(queryStringPhotos)
               db.query(queryStringPhotos, (err, success) => {
                 if(err){
                   reject(err)
@@ -78,8 +76,31 @@ module.exports = {
             })
           })
         )
-        .then(response => callBack(null, response))
-        .catch(err => callBack(err))
+        .then(response => {
+          Promise.all(
+            Object.keys(body.characteristics).map(key => {
+              let value = body.characteristics[key]
+              return new Promise((resolve, reject) => {
+                let queryStringChar = `INSERT INTO characteristics_review (characteristics_id, review_id, value) VALUES (${+key}, ${id[0]['LAST_INSERT_ID()']}, ${value})`
+                db.query(queryStringChar, (err, resp) => {
+                  if(err){
+                    reject(err)
+                  }
+                  resolve(resp)
+                })
+              })
+            })
+          )
+          .then(response => callBack(null, response))
+          .catch(err => {
+            console.log(err)
+            callBack(err)
+          })
+        })
+        .catch(err => {
+          console.log(err)
+          callBack(err)
+        })
       })
 
     })
