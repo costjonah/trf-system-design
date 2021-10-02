@@ -40,7 +40,58 @@ module.exports = {
   },
 
   getMeta: function(productID, callBack){
+    let rating = {
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0,
+      5: 0
+    }
 
+    let recommend = {
+      false: 0,
+      true: 0
+    }
+
+    let characteristics = {
+
+    }
+
+    let queryString = `SELECT id, rating, recommend FROM reviews WHERE product_id = ${productID}`
+    db.query(queryString, (err, data) => {
+      if(err){
+        callBack(err)
+      }
+      data.forEach(review => {
+        rating[review.rating] = rating[review.rating] + 1;
+        if(review.recommend === 1){
+          recommend.true = recommend.true + 1;
+        } else {
+          recommend.false = recommend.false + 1;
+        }
+      })
+      let characteristics = {}
+      let queryChar = `SELECT characteristics.name, AVG(characteristics_review.value),characteristics_review.characteristics_id FROM reviews LEFT JOIN characteristics
+            ON characteristics.product_id = reviews.product_id,
+        characteristics_review, products
+        WHERE reviews.product_id = ${productID}
+        AND characteristics_review.review_id = reviews.id
+        AND characteristics.id = characteristics_review.characteristics_id
+        AND reviews.product_id = products.id
+        GROUP BY characteristics.name,characteristics_review.characteristics_id;`
+      db.query(queryChar,  (err, data)=> {
+        if(err){
+          console.log(err)
+          callBack(err)
+        }
+        data.forEach(meta => {
+          characteristics[meta.name] = {id: meta.characteristics_id, value: meta["AVG(characteristics_review.value)"]}
+        })
+        callBack(null, {product_id: productID,rating, recommend, characteristics})
+      })
+
+      // callBack(null, {product_id: productID,rating, recommend})
+    })
   },
 
   addReview: function(body, callBack){

@@ -25,7 +25,12 @@ module.exports = {
           res.status(500)
           res.send('Something went wrong')
         }
-        res.json(data)
+        let result = {}
+        result.product = product_id
+        result.count = count
+        result.sort = sort
+        result.results = data
+        res.json(result)
       })
     } else {
       res.status(422)
@@ -34,8 +39,15 @@ module.exports = {
   },
 
   getMeta: function(req,res){
-    let product_id = req.query.product_id
-    res.send(`Get Meta: ${product_id}`)
+    let productID = req.query.product_id
+    console.log(productID)
+    models.getMeta(productID, (err, data) => {
+      if(err){
+        res.send(err)
+      }
+      res.status(200)
+      res.send(data)
+    })
   },
 
   addReview: function(req,res){
