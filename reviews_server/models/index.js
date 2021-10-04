@@ -70,17 +70,22 @@ module.exports = {
           recommend.false = recommend.false + 1;
         }
       })
-      let queryChar = `SELECT characteristics.name, characteristics.id, AVG(characteristics_review.value) as value FROM characteristics_review INNER JOIN reviews INNER JOIN characteristics ON reviews.id = characteristics_review.review_id AND reviews.product_id = ${productID} AND characteristics.product_id = ${productID} AND characteristics_review.characteristics_id = characteristics.id GROUP BY characteristics_review.characteristics_id `
+      let queryChar = `SELECT characteristics.name, characteristics.id, AVG(characteristics_review.value) as value
+       FROM characteristics_review RIGHT OUTER JOIN characteristics
+       ON characteristics_review.characteristics_id = characteristics.id WHERE characteristics.product_id = ${productID}
+       GROUP BY characteristics.name, characteristics.id`
+
       db.query(queryChar,  (err, data)=> {
         if(err){
           console.log(err)
           callBack(err)
+        } else {
+          console.log(data)
+          data.forEach(meta => {
+            characteristics[meta.name] = {id: meta.id, value: meta.value}
+          })
+          callBack(null, {product_id: productID,rating, recommend, characteristics})
         }
-        console.log(data)
-        data.forEach(meta => {
-          characteristics[meta.name] = {id: meta.id, value: meta.value}
-        })
-        callBack(null, {product_id: productID,rating, recommend, characteristics})
       })
 
       // callBack(null, {product_id: productID,rating, recommend})
