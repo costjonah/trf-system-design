@@ -1,23 +1,27 @@
 const pg = require("pg");
-const config = require("../config.js");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const pool = new pg.Pool({
-  user: "JonahC",
-  host: "localhost",
-  database: "products",
-  password: config.dbPassword,
+  user: process.env.DATABASE_USER,
+  host: "localhost", // host.internal.docker
+  database: process.env.DATABASE_NAME,
+  password: process.env.DATABASE_PASS,
   port: 5432,
 });
 
 pool.connect((err, client, done) => {
   if (err) {
-    throw err;
+    return console.error("Error acquiring client", err.stack);
   }
-  done();
+  client.query("SELECT NOW()", (err, result) => {
+    done();
+    if (err) {
+      return console.error("Error executing query", err.stack);
+    } else {
+    console.log("CONNECTED: ", result.rows);
+    }
+  });
 });
 
-var endConnect = () => {
-  return pool.end();
-};
-
-module.exports = { pool, endConnect };
+module.exports = pool;

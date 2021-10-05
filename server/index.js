@@ -1,7 +1,10 @@
 const app = require("./app.js");
+const http = require("http");
 
-let port = 3000 || process.env.PORT;
+let port = 8080 || process.env.PORT;
 
-app.listen(port, () => {
+let httpServer = http.createServer(app);
+
+httpServer.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });

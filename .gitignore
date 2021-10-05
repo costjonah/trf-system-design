@@ -1,2 +1,5 @@
 config.js
 node_modules
+docker-compose.yml
+.env
+backup.sql

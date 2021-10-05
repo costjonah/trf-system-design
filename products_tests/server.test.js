@@ -17,7 +17,7 @@ beforeAll((done) => {
 
 afterAll((done) => {
   server.close(done);
-  db.endConnect();
+  db.end();
 });
 
 const baseUser = { user_session: "1234" };

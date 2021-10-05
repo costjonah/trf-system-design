@@ -2,6 +2,10 @@ const express = require("express");
 const router = express.Router();
 const controllers = require("./controllers.js");
 
+router.get("/", (req, res) => {
+  res.redirect("/products");
+});
+
 router.get("/products", controllers.productsList.getProducts);
 
 router.get("/products/:product_id", controllers.productInfo.getProductInfo);
