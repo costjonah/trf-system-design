@@ -7,36 +7,50 @@ function validateEmail(email) {
 
 module.exports = {
   getReviews: function(page,count,sort,product_id,callBack){
-    let query = `SELECT id AS review_id, rating,summary,recommend,response,body,date,reviewer_name,helpfulness FROM reviews WHERE product_id = ? and reported = 0 ORDER BY ${sort} DESC LIMIT ${count}`
-    let queryArgs = [product_id, count]
-    db.query(query,queryArgs, (err, data)=>{
+    let queryString = `SELECT rev.id AS review_id, rev.rating, rev.summary, rev.recommend, rev.response, rev.body, FROM_UNIXTIME(rev.date/1000) as date, rev.reviewer_name, rev.helpfulness,
+    JSON_ARRAYAGG(JSON_OBJECT('id', photo.id, 'url', photo.url)) as photos
+    FROM reviews rev INNER JOIN review_photos photo
+    ON rev.product_id = ${product_id} AND photo.review_id = rev.id
+    GROUP BY review_id, rev.rating, rev.summary, rev.recommend, rev.response, rev.body, rev.date, rev.reviewer_name, rev.helpfulness`
+
+    db.query(queryString, (err, data) => {
       if(err){
         callBack(err)
       } else {
-        Promise.all(
-          data.map(review => {
-            let newDate = new Date(review.date)
-            newDate.toISOString()
-            review.date = newDate
-
-            return new Promise((resolve, reject) => {
-              let queryString = `SELECT id, url FROM review_photos WHERE review_id = ${review.review_id}`
-              db.query(queryString, (err, photos) => {
-                if(err){
-                  reject(err)
-                } else {
-                  review.photos = photos
-                  resolve(review)
-                }
-              })
-            })
-          })
-        )
-        .then(updatedData => {
-          callBack(null, data)
-        })
+        callBack(null, data)
       }
     })
+
+    // let query = `SELECT id AS review_id, rating,summary,recommend,response,body, date,reviewer_name,helpfulness FROM reviews WHERE product_id = ? and reported = 0 ORDER BY ${sort} DESC LIMIT ${count}`
+    // let queryArgs = [product_id, count]
+    // db.query(query,queryArgs, (err, data)=>{
+    //   if(err){
+    //     callBack(err)
+    //   } else {
+    //     Promise.all(
+    //       data.map(review => {
+    //         let newDate = new Date(review.date)
+    //         newDate.toISOString()
+    //         review.date = newDate
+
+    //         return new Promise((resolve, reject) => {
+    //           let queryString = `SELECT id, url FROM review_photos WHERE review_id = ${review.review_id}`
+    //           db.query(queryString, (err, photos) => {
+    //             if(err){
+    //               reject(err)
+    //             } else {
+    //               review.photos = photos
+    //               resolve(review)
+    //             }
+    //           })
+    //         })
+    //       })
+    //     )
+    //     .then(updatedData => {
+    //       callBack(null, data)
+    //     })
+    //   }
+    // })
   },
 
   getMeta: function(productID, callBack){
@@ -48,7 +62,7 @@ module.exports = {
       5: 0
     }
 
-    let recommend = {
+    let recommended = {
       false: 0,
       true: 0
     }
@@ -64,10 +78,10 @@ module.exports = {
       }
       data.forEach(review => {
         rating[review.rating] = rating[review.rating] + 1;
-        if(review.recommend === 1){
-          recommend.true = recommend.true + 1;
+        if(review.recommended === 1){
+          recommended.true = recommended.true + 1;
         } else {
-          recommend.false = recommend.false + 1;
+          recommended.false = recommended.false + 1;
         }
       })
       let queryChar = `SELECT characteristics.name, characteristics.id, AVG(characteristics_review.value) as value
@@ -75,16 +89,15 @@ module.exports = {
        ON characteristics_review.characteristics_id = characteristics.id WHERE characteristics.product_id = ${productID}
        GROUP BY characteristics.name, characteristics.id`
 
-      db.query(queryChar,  (err, data)=> {
+      db.query(queryChar,  (err, data1)=> {
         if(err){
           console.log(err)
           callBack(err)
         } else {
-          console.log(data)
-          data.forEach(meta => {
+          data1.forEach(meta => {
             characteristics[meta.name] = {id: meta.id, value: meta.value}
           })
-          callBack(null, {product_id: productID,rating, recommend, characteristics})
+          callBack(null, {product_id: productID,rating, recommended, characteristics})
         }
       })
 

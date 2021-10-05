@@ -6,13 +6,10 @@ var db = mysql.createConnection({
   database: 'reviews'
 })
 
-db.connect( (err) => {
+db.connect( err => {
   if (err) {
     console.log(err);
   }
-
-  console.log('Connected to reviews Database');
-
 })
 
 module.exports = db

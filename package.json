@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon reviews_server/app.js"
+    "start": "nodemon reviews_server/server.js",
+    "test": "jest --watchAll --detectOpenHandles"
   },
   "repository": {
     "type": "git",

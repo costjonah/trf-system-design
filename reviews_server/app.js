@@ -1,7 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
 const controller = require('./controller/index.js');
-const port = 3001
 
 const app = express()
 
@@ -19,6 +18,4 @@ app.put('/api/reviews/:review_id/helpful', controller.markHelpful)
 //Report a review
 app.put('/api/reviews/:review_id/report', controller.reportReview)
 
-app.listen(port, ()=> {
-  console.log(`Express running on ${port}`)
-})
+module.exports = app
