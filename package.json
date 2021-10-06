@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/hr-rfe5-ignis/SDC#readme",
   "dependencies": {
+    "artillery": "^1.7.9",
     "bluebird": "^3.7.2",
     "express": "^4.17.1",
     "morgan": "^1.10.0",

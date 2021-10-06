@@ -1,0 +1,19 @@
+config:
+  target: 'http://localhost:3001/api/reviews'
+  phases:
+    - duration: 60
+      arrivalRate: 100
+      name: 'Warm Up'
+    - duration: 30
+      arrivalRate: 500
+      name: '500 users wow'
+    - duration: 30
+      arrivalRate: 1000
+      name: 'WOW 1000'
+scenarios:
+  - name: "User Geting Meta"
+    flow:
+      - get:
+          url: "/meta/?product_id=3231"
+      - get:
+          url: "/?product_id=31251&sort=newest"
