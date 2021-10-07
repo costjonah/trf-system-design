@@ -23,3 +23,25 @@ module.exports = db
 // LINES TERMINATED BY '\n'
 // IGNORE 1 LINES
 // (id,product_id,rating,date,summary,body,recommend,reported,reviewer_name,reviewer_email,response,helpfulness);
+
+// var mysql = require('mysql2');
+
+// var db = mysql.createConnection({
+//   host: '3.22.222.197',
+//   user: 'shavkat',
+//   database: 'reviews',
+//   password: 'password',
+//   port: '3306'
+// })
+
+// db.connect( err => {
+//   if (err) {
+//     console.log(err);
+//   } else {
+//     console.log('Connected to database')
+//   }
+// })
+
+// module.exports = db
+
+

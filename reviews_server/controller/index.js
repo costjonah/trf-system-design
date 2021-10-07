@@ -37,8 +37,7 @@ module.exports = {
           result.count = count
           result.sort = sort
           result.results = data
-          result.results[0].photos = JSON.parse(result.results[0].photos)
-          res.send(result)
+          res.json(result)
         }
       })
     } else if(!product_id) {

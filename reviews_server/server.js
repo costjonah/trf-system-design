@@ -1,4 +1,4 @@
 const app = require('./app.js')
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 3000
 
-app.listen(3001,()=>{console.log('connected')})
+app.listen(port,()=>{console.log('connected',port,'test')})
