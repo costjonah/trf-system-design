@@ -7,34 +7,21 @@ function validateEmail(email) {
 
 module.exports = {
   getReviews: function(page,count,sort,product_id,callBack){
-    let query = `SELECT id AS review_id, rating,summary,recommend,response,body,date,reviewer_name,helpfulness FROM reviews WHERE product_id = ? and reported = 0 ORDER BY ${sort} DESC LIMIT ${count}`
-    let queryArgs = [product_id, count]
-    db.query(query,queryArgs, (err, data)=>{
+    // let queryString = `SELECT JSON_OBJECT('product', '${product_id}', 'count', '${count}', 'sort', '${sort}') as result `
+
+    let queryString = `SELECT r.id as review_id,r.rating,r.summary,r.recommend, r.response, r.body, FROM_UNIXTIME(r.date/1000) as date, r.reviewer_name, r.helpfulness,
+    JSON_ARRAYAGG(JSON_OBJECT('id', p.id, 'url', p.url)) as photos
+    FROM reviews r LEFT JOIN review_photos p
+    ON r.id = p.review_id
+    WHERE product_id = ${product_id}
+    GROUP BY r.id`
+
+
+    db.query(queryString, (err, data) => {
       if(err){
         callBack(err)
       } else {
-        Promise.all(
-          data.map(review => {
-            let newDate = new Date(review.date)
-            newDate.toISOString()
-            review.date = newDate
-
-            return new Promise((resolve, reject) => {
-              let queryString = `SELECT id, url FROM review_photos WHERE review_id = ${review.review_id}`
-              db.query(queryString, (err, photos) => {
-                if(err){
-                  reject(err)
-                } else {
-                  review.photos = photos
-                  resolve(review)
-                }
-              })
-            })
-          })
-        )
-        .then(updatedData => {
-          callBack(null, data)
-        })
+        callBack(null, data)
       }
     })
   },

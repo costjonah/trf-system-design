@@ -37,7 +37,14 @@ module.exports = {
           result.count = count
           result.sort = sort
           result.results = data
-          res.json(result)
+          result.results.forEach(review => {
+            if(review.photos == '[{"id": null, "url": null}]'){
+              review.photos = []
+            } else {
+            review.photos = JSON.parse(review.photos)
+            }
+          })
+          res.send(result)
         }
       })
     } else if(!product_id) {
